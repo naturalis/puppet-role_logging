@@ -28,7 +28,7 @@ class role_logging::elasticsearch_node(){
   }
 
   es_instance_conn_validator { "logging-cluster-${::hostname}" :
-    server =>  $::ipaddress,
+    server =>  'localhost',
     port   => '9200',
   }
 
