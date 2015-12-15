@@ -42,6 +42,7 @@ class role_logging::elasticsearch_node(){
     command   => '/usr/bin/curl -XPUT localhost:9200/_cluster/settings -d \'{ "persistent" : { "discovery.zen.minimum_master_nodes" : \'"$(( ($(/usr/bin/curl -s localhost:9200/_cat/nodes | grep elasticsearch | wc -l)/2) + 1))"\' } } \'',
     unless    => '/usr/bin/test "$(curl -s localhost:9200/_cat/nodes | grep elasticsearch | grep -v * | wc -l)" -eq "$(( ($(/usr/bin/curl -s localhost:9200/_cat/nodes | grep elasticsearch | wc -l)/2) + 1))" ',
     #require   => Es_instance_conn_validator["logging-cluster-${::hostname}"] ,
+    require   => Class['elasticsearch']
     tries     => 5,
     try_sleep => 10,
   }
