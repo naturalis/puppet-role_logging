@@ -15,9 +15,11 @@ class role_logging::elasticsearch_node(){
       'index.number_of_replicas' => 1
     },
     init_defaults => {
-      'ES_HEAD_SIZE' => ceiling($::memorysize_mb/2048)
+      'ES_HEAP_SIZE' => '50%'
     }
   }
+
+      #'ES_HEAP_SIZE' => ceiling($::memorysize_mb/2048)
 
   elasticsearch::instance { "logging-cluster-${::hostname}":
 
