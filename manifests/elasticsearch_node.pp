@@ -13,7 +13,7 @@ class role_logging::elasticsearch_node(){
       'cluster.name'             => 'Naturalis Logging Cluster',
       'index.number_of_shards'   => 15,
       'index.number_of_replicas' => 1,
-      'network.host'             => $::ipaddress,
+      'network.host'             => '0.0.0.0',
     },
     init_defaults => {
       'ES_HEAP_SIZE' => "${heapsize}g"
