@@ -5,7 +5,7 @@ class role_logging::elasticsearch(){
 
 
 
-  class { 'elasticsearch':
+  class { '::elasticsearch':
     package_url   => 'https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.1.0/elasticsearch-2.1.0.deb',
     java_install  => true,
     config        => {
