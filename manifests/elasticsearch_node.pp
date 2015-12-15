@@ -3,7 +3,7 @@
 #
 class role_logging::elasticsearch_node(){
 
-  heapsize = ceiling($::memorysize_mb/2048)
+  $heapsize = ceiling($::memorysize_mb/2048)
 
   class { 'elasticsearch':
     package_url   => 'https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.1.0/elasticsearch-2.1.0.deb',
@@ -15,7 +15,7 @@ class role_logging::elasticsearch_node(){
       'index.number_of_replicas' => 1
     },
     init_defaults => {
-      'ES_HEAP_SIZE' => "${::heapsize}g"
+      'ES_HEAP_SIZE' => "${heapsize}g"
     }
   }
 
