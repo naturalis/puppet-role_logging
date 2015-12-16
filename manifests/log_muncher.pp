@@ -18,14 +18,14 @@ class role_logging::log_muncher(
       distribution => 'jre',
     }
 
-    wget::fetch {$logstash_link :
+    wget::fetch { $logstash_link :
       destination => '/opt/logstash_2.1.1-1_all.deb',
       timeout     => 0,
       verbose     => false,
     }
 
     exec { 'dpkg -i /opt/logstash_2.1.1-1_all.deb':
-      subscribe   => Wget::fetch[$logstash_link],
+      subscribe   => Wget::Fetch[$logstash_link],
       refreshonly => true,
     }
 
