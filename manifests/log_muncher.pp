@@ -4,7 +4,7 @@
 class role_logging::log_muncher(
     $elasticsearch_adresses = [],
     $logstash_link = 'https://download.elastic.co/logstash/logstash/packages/debian/logstash_2.1.1-1_all.deb',
-    $filebeat_link = 'https://download.elastic.co/beats/filebeat/filebeat_1.0.0_amd64.deb'
+    $filebeat_link = 'https://download.elastic.co/beats/filebeat/filebeat_1.0.0_amd64.deb',
     $filter = 'filter {}'
 ){
 
@@ -47,7 +47,7 @@ class role_logging::log_muncher(
       require => Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
     }
 
-  
+
     file {'/etc/logstash/conf.d/logstash.conf':
       content   => $logstash_filter,
       mode      => '0660',
