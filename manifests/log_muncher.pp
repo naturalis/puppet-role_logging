@@ -47,6 +47,11 @@ class role_logging::log_muncher(
       require => Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
     }
 
+    service { 'filebeat':
+      ensure  => running,
+      require => Exec['/usr/bin/dpkg -i /opt/filebeat_1.0.0_amd64.deb'],
+    }
+
 
     file {'/etc/logstash/conf.d/logstash.conf':
       content   => $logstash_filter,
