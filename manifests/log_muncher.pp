@@ -9,10 +9,11 @@ class role_logging::log_muncher(
 
     include wget
 
-    $input = template('logstash/input.erb')
-    $output = template('logstash/output.erb')
+    $input = template('role_logging/logstash/input.erb')
+    $output = template('role_logging/logstash/output.erb')
 
     $logstash_filter = "### MANAGED BY PUPPET ###\n${input}\n${filter}\n${output}"
+
 
     class { '::java':
       distribution => 'jre',
