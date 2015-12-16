@@ -20,7 +20,7 @@ class role_logging::elasticsearch_node(
       'cluster.name'                         => 'Naturalis Logging Cluster',
       'index.number_of_shards'               => 15,
       'index.number_of_replicas'             => 1,
-      'network.host'                         => '0.0.0.0',
+      'network.host'                         => $::ipaddress,
       'discovery.zen.minimum_master_nodes'   => 1,
       'discovery.zen.ping.multicast.enabled' => false,
       'discovery.zen.ping.unicast.hosts'     => $nodes_ip_array,
