@@ -22,7 +22,7 @@ class role_logging::elasticsearch_node(
       'discovery.zen.minimum_master_nodes'   => 1,
       'discovery.zen.ping.multicast.enabled' => false,
       'discovery.zen.ping.unicast.hosts'     => $nodes_ip_array,
-      'discovery.zen.ping_timeout'           => 30,
+      'discovery.zen.ping_timeout'           => '30s',
     },
     init_defaults => {
       'ES_HEAP_SIZE' => "${heapsize}g"
