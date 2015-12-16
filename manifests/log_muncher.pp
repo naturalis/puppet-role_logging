@@ -37,7 +37,7 @@ class role_logging::log_muncher(
       refreshonly => true,
     }
 
-    exec { '/usr/bin/dpkg -i/opt/filebeat_1.0.0_amd64.deb':
+    exec { '/usr/bin/dpkg -i /opt/filebeat_1.0.0_amd64.deb':
       subscribe   => Wget::Fetch[$filebeat_link],
       refreshonly => true,
     }
@@ -55,7 +55,7 @@ class role_logging::log_muncher(
       group     => 'wheel',
       require   => [
         Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
-        Exec['/usr/bin/dpkg -i/opt/filebeat_1.0.0_amd64.deb']],
+        Exec['/usr/bin/dpkg -i /opt/filebeat_1.0.0_amd64.deb']],
       subscribe => Service['logstash'],
     }
 }
