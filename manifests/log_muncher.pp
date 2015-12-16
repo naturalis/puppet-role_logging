@@ -43,7 +43,7 @@ class role_logging::log_muncher(
     file {'/etc/logstash/conf.d/logstash.conf':
       content   => $logstash_filter,
       mode      => '0660',
-      user      => 'logstash',
+      owner     => 'logstash',
       group     => 'wheel',
       require   => Exec['dpkg -i /opt/logstash_2.1.1-1_all.deb'],
       subscribe => Service['logstash'],
