@@ -15,6 +15,8 @@ class role_logging::elasticsearch_node(
     java_install  => true,
     config        => {
       'node.name'                            => $::hostname,
+      'node.master'                          => true,
+      'node.data'                            => true,
       'cluster.name'                         => 'Naturalis Logging Cluster',
       'index.number_of_shards'               => 15,
       'index.number_of_replicas'             => 1,
