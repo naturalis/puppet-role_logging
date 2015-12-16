@@ -32,13 +32,11 @@ class role_logging::log_muncher(
 
     service { 'logstash':
       ensure  => running,
-      enabled => true,
       require => Exec['dpkg -i /opt/logstash_2.1.1-1_all.deb'],
     }
 
     service { 'logstash-web':
       ensure  => stopped,
-      enabled => false,
       require => Exec['dpkg -i /opt/logstash_2.1.1-1_all.deb'],
     }
 
