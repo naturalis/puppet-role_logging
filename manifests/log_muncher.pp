@@ -25,19 +25,19 @@ class role_logging::log_muncher(
       verbose     => false,
     }
 
-    exec { 'dpkg -i /opt/logstash_2.1.1-1_all.deb':
+    exec { '/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb':
       subscribe   => Wget::Fetch[$logstash_link],
       refreshonly => true,
     }
 
     service { 'logstash':
       ensure  => running,
-      require => Exec['dpkg -i /opt/logstash_2.1.1-1_all.deb'],
+      require => Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
     }
 
     service { 'logstash-web':
       ensure  => stopped,
-      require => Exec['dpkg -i /opt/logstash_2.1.1-1_all.deb'],
+      require => Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
     }
 
     file {'/etc/logstash/conf.d/logstash.conf':
@@ -45,7 +45,7 @@ class role_logging::log_muncher(
       mode      => '0660',
       owner     => 'logstash',
       group     => 'wheel',
-      require   => Exec['dpkg -i /opt/logstash_2.1.1-1_all.deb'],
+      require   => Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
       subscribe => Service['logstash'],
     }
 }
