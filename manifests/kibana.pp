@@ -7,7 +7,7 @@ class role_logging::kibana(
 
 
 
-  staging::deploy {'download and extract Kibana':
+  staging::deploy {'kibana-4.3.1-linux-x64.tar.gz':
     source => $kibana_link,
     target => '/opt/'
   }
