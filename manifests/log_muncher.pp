@@ -34,10 +34,11 @@ class role_logging::log_muncher(
     }
 
     service { 'logstash':
-      ensure  => running,
-      require => [
+      ensure    => running,
+      require   => [
         Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
         Class['::java']],
+      subscribe => File['/etc/logstash/conf.d/logstash.conf']
     }
 
 
@@ -54,16 +55,15 @@ class role_logging::log_muncher(
     }
 
     file {'/etc/logstash/conf.d/logstash.conf':
-      content   => $logstash_filter,
-      mode      => '0660',
-      owner     => 'logstash',
-      group     => 'wheel',
-      require   => [
+      content => $logstash_filter,
+      mode    => '0660',
+      owner   => 'logstash',
+      group   => 'wheel',
+      require => [
         Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
         File['/etc/ssl/logstash_cert.crt'],
         File['/etc/ssl/logstash_key.key']
         ],
-      subscribe => Service['logstash'],
     }
 
 
