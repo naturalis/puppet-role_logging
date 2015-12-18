@@ -22,6 +22,12 @@ class role_logging::kibana(
     match => '^elasticsearch.url'
   }
 
+  file_line {'server_host_config':
+    path  => "/opt/kibana-${kibana_version}-linux-x64/config/kibana.yml",
+    line  => 'server.host: 127.0.0.1',
+    match => '^server.host'
+  }
+
   file { 'kibana service init':
     content => template('role_logging/kibana/init.erb'),
     path    => '/etc/init.d/kibana',
@@ -64,7 +70,7 @@ class role_logging::kibana(
     members => ['localhost:5601'],
   }
 
-  httpauth { 'kibadmin':
+  httpauth { 'kibana':
     ensure    => present,
     file      => '/etc/nginx/.htpasswd',
     password  => $kibana_password,
@@ -74,7 +80,7 @@ class role_logging::kibana(
   # Set correct permissions on password file
   file { '/etc/nginx/.htpasswd':
     mode    => '0644',
-    require => Httpauth['kibadmin']
+    require => Httpauth['kibana']
   }
 
 
@@ -89,7 +95,7 @@ class role_logging::kibana(
     require              => [
       File['/etc/ssl/web_client_key.pem'],
       File['/etc/ssl/web_client_cert.pem'],
-      Httpauth['kibadmin']],
+      Httpauth['kibana']],
   }
 
 
