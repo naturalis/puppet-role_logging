@@ -3,7 +3,9 @@
 #
 class role_logging::kibana(
   $kibana_version = '4.3.1',
-  $elasticsearch_host = '127.0.0.1'
+  $elasticsearch_host = '127.0.0.1',
+  $certificate,
+  $private_key,
 ){
 
   $kibana_link = "https://download.elastic.co/kibana/kibana/kibana-${kibana_version}-linux-x64.tar.gz"
@@ -37,10 +39,40 @@ class role_logging::kibana(
     path    => '/etc/logrotate.d/kibana',
   }
 
+  file { '/etc/ssl/web_client_key.pem' :
+    ensure  => present,
+    content => $private_key,
+    mode    => '0644',
+  }
+
+  file { '/etc/ssl/web_client_cert.pem' :
+    ensure  => present,
+    content => $certificate,
+    mode    => '0644',
+  }
 
   service {'kibana':
     ensure    => running,
     subscribe => File['kibana service init'],
   }
+
+
+  class {'nginx': }
+
+  nginx::resource::upstream { 'kibana_naturalis_nl':
+    members => ['localhost:5601'],
+  }
+
+  nginx::resource::vhost { 'kibana.naturalis.nl':
+    proxy       => 'http://sensu_naturalis_nl',
+    ssl         => true,
+    listen_port => 443,
+    ssl_cert    => '/etc/ssl/web_client_cert.pem',
+    ssl_key     => '/etc/ssl/web_client_key.pem',
+    require     => [
+      File['/etc/ssl/web_client_key.pem/etc/ssl/web_client_key.pem'],
+      File['/etc/ssl/web_client_key.pem/etc/ssl/web_client_cert.pem']],
+  }
+
 
 }
