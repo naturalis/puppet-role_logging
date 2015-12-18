@@ -1,5 +1,8 @@
 input {
   beats {
     port => 5875
+    ssl  => true
+    ssl_certificate => "/etc/ssl/logstash_cert.crt"
+    ssl_key => "/etc/ssl/logstash_key.key"
   }
 }

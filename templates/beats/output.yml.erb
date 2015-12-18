@@ -1,0 +1,20 @@
+output:
+  logstash:
+    hosts: [<%= @logstash_servers.map {|l| "#{l}:5875"}.join('\",\"') %>]
+    loadbalance: true
+
+    tls:
+      # List of root certificates for HTTPS server verifications
+      #certificate_authorities: ["/etc/pki/root/ca.pem"]
+
+      # Certificate for TLS client authentication
+      certificate: "/etc/ssl/logstash_cert.crt"
+
+      # Client Certificate Key
+      certificate_key: "/etc/ssl/logstash_key.key"
+
+      # Controls whether the client verifies server certificates and host name.
+      # If insecure is set to true, all server host names and certificates will be
+      # accepted. In this mode TLS based connections are susceptible to
+      # man-in-the-middle attacks. Use only for testing.
+      insecure: true

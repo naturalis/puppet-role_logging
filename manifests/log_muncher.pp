@@ -4,8 +4,9 @@
 class role_logging::log_muncher(
     $elasticsearch_adresses = [],
     $logstash_link = 'https://download.elastic.co/logstash/logstash/packages/debian/logstash_2.1.1-1_all.deb',
-    $filebeat_link = 'https://download.elastic.co/beats/filebeat/filebeat_1.0.0_amd64.deb',
-    $filter = 'filter {}'
+    $filter = 'filter {}',
+    $logstash_private_key,
+    $logstash_certificate,
 ){
 
     include wget
@@ -14,6 +15,7 @@ class role_logging::log_muncher(
     $output = template('role_logging/logstash/output.erb')
 
     $logstash_filter = "### MANAGED BY PUPPET ###\n${input}\n${filter}\n${output}"
+
 
 
     class { '::java':
@@ -26,32 +28,30 @@ class role_logging::log_muncher(
       verbose     => false,
     }
 
-    wget::fetch { $filebeat_link :
-      destination => '/opt/filebeat_1.0.0_amd64.deb',
-      timeout     => 0,
-      verbose     => false,
-    }
-
     exec { '/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb':
       subscribe   => Wget::Fetch[$logstash_link],
       refreshonly => true,
     }
 
-    exec { '/usr/bin/dpkg -i /opt/filebeat_1.0.0_amd64.deb':
-      subscribe   => Wget::Fetch[$filebeat_link],
-      refreshonly => true,
-    }
-
     service { 'logstash':
       ensure  => running,
-      require => Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
+      require => [
+        Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
+        Class['::java']],
     }
 
-    service { 'filebeat':
-      ensure  => running,
-      require => Exec['/usr/bin/dpkg -i /opt/filebeat_1.0.0_amd64.deb'],
+
+    file { '/etc/ssl/logstash_key.key' :
+      ensure  => present,
+      content => $logstash_private_key,
+      mode    => '0644',
     }
 
+    file { '/etc/ssl/logstash_cert.crt' :
+      ensure  => present,
+      content => $logstash_certificate,
+      mode    => '0644',
+    }
 
     file {'/etc/logstash/conf.d/logstash.conf':
       content   => $logstash_filter,
@@ -60,7 +60,11 @@ class role_logging::log_muncher(
       group     => 'wheel',
       require   => [
         Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
-        Exec['/usr/bin/dpkg -i /opt/filebeat_1.0.0_amd64.deb']],
+        File['/etc/ssl/logstash_cert.crt'],
+        File['/etc/ssl/logstash_key.key']
+        ],
       subscribe => Service['logstash'],
     }
+
+
 }
