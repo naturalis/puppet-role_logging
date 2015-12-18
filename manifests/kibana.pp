@@ -26,6 +26,12 @@ class role_logging::kibana(
     require => Staging::Deploy["kibana-${kibana_version}-linux-x64.tar.gz"],
   }
 
+  file {'kibana log directory':
+    ensure => directory,
+    path   => '/var/log/kibana',
+    before => Service['kibana']
+  }
+
   service {'kibana':
     ensure    => running,
     subscribe => File['kibana service init'],
