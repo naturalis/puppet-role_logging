@@ -4,6 +4,7 @@
 class role_logging::kibana(
   $kibana_version = '4.3.1',
   $elasticsearch_host = '127.0.0.1',
+  $kibana_password,
   $certificate,
   $private_key,
 ){
@@ -63,16 +64,35 @@ class role_logging::kibana(
     members => ['localhost:5601'],
   }
 
-  nginx::resource::vhost { 'kibana.naturalis.nl':
-    proxy       => 'http://kibana_naturalis_nl',
-    ssl         => true,
-    listen_port => 443,
-    ssl_cert    => '/etc/ssl/web_client_cert.pem',
-    ssl_key     => '/etc/ssl/web_client_key.pem',
-    require     => [
-      File['/etc/ssl/web_client_key.pem'],
-      File['/etc/ssl/web_client_cert.pem']],
+  httpauth { 'kibadmin':
+    ensure    => present,
+    file      => '/etc/nginx/.htpasswd',
+    password  => $kibana_password,
+    mechanism => basic,
+    notify    => Service['nginx'],
   }
+  # Set correct permissions on password file
+  file { '/etc/nginx/.htpasswd':
+    mode    => '0644',
+    require => Httpauth['kibadmin']
+  }
+
+
+  nginx::resource::vhost { 'kibana.naturalis.nl':
+    proxy                => 'http://kibana_naturalis_nl',
+    ssl                  => true,
+    listen_port          => 443,
+    ssl_cert             => '/etc/ssl/web_client_cert.pem',
+    ssl_key              => '/etc/ssl/web_client_key.pem',
+    auth_basic           => 'Restricted Content',
+    auth_basic_user_file => '/etc/nginx/.htpasswd',
+    require              => [
+      File['/etc/ssl/web_client_key.pem'],
+      File['/etc/ssl/web_client_cert.pem'],
+      Httpauth['kibadmin']],
+  }
+
+
 
 
 }
