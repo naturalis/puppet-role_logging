@@ -64,7 +64,7 @@ class role_logging::kibana(
   }
 
   nginx::resource::vhost { 'kibana.naturalis.nl':
-    proxy       => 'http://sensu_naturalis_nl',
+    proxy       => 'http://kibana_naturalis_nl',
     ssl         => true,
     listen_port => 443,
     ssl_cert    => '/etc/ssl/web_client_cert.pem',
