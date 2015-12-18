@@ -10,6 +10,7 @@ class role_logging::beats(
   $logstash_certificate,
 ){
 
+
   file { '/etc/ssl/logstash_key.key' :
     ensure  => present,
     content => $logstash_private_key,
@@ -35,14 +36,22 @@ class role_logging::beats(
       refreshonly => true,
     }
 
+    file {'/etc/filebeat/filebeat.yml':
+      content => template('role_logging/beats/filebeat_part.yml.erb','role_logging/beats/output.yml.erb'),
+      require => Exec['/usr/bin/dpkg -i /opt/filebeat_1.0.0_amd64.deb'],
+    }
+
     service { 'filebeat':
       ensure  => running,
       require => [
         Exec['/usr/bin/dpkg -i /opt/filebeat_1.0.0_amd64.deb'],
         File['/etc/ssl/logstash_cert.crt'],
-        File['/etc/ssl/logstash_key.key']
+        File['/etc/ssl/logstash_key.key'],
+        File['/etc/filebeat/filebeat.yml']
         ],
     }
+
+
   }
 
 
