@@ -32,6 +32,12 @@ class role_logging::kibana(
     before => Service['kibana']
   }
 
+  file {'kibana log rotate':
+    content => template('role_logging/kibana/logrotate.erb'),
+    path    => '/etc/logrotate.d/kibana',
+  }
+
+
   service {'kibana':
     ensure    => running,
     subscribe => File['kibana service init'],
