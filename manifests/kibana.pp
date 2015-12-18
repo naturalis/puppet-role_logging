@@ -14,7 +14,7 @@ class role_logging::kibana(
   }
 
   file_line {'kibana_es_host_config':
-    path => '/opt/kibana-4.3.1-linux-x64/config/kibana.yaml',
+    path => '/opt/kibana-4.3.1-linux-x64/config/kibana.yml',
     line => "elasticsearch.url: ${elasticsearch_host}:9200",
   }
 
