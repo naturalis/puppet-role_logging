@@ -70,8 +70,8 @@ class role_logging::kibana(
     ssl_cert    => '/etc/ssl/web_client_cert.pem',
     ssl_key     => '/etc/ssl/web_client_key.pem',
     require     => [
-      File['/etc/ssl/web_client_key.pem/etc/ssl/web_client_key.pem'],
-      File['/etc/ssl/web_client_key.pem/etc/ssl/web_client_cert.pem']],
+      File['/etc/ssl/web_client_key.pem'],
+      File['/etc/ssl/web_client_cert.pem']],
   }
 
 
