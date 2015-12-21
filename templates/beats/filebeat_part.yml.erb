@@ -6,7 +6,8 @@ result = {'filebeat' => {'prospectors' => [] }}
   temp = f.delete('input_type') if f.has_key?('input_type')
   result['filebeat']['prospectors'] << f
 end
--%>
-<%=
-result.to_yaml
+puts result.to_yaml
 %>
+#
+#result.to_yaml
+#
