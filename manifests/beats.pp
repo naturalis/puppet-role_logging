@@ -51,9 +51,9 @@ class role_logging::beats(
     }
 
     service { 'filebeat':
-      ensure   => running,
-      subcribe => File['/etc/filebeat/filebeat.yml'],
-      require  => [
+      ensure    => running,
+      subscribe => File['/etc/filebeat/filebeat.yml'],
+      require   => [
         Exec['/usr/bin/dpkg -i /opt/filebeat_1.0.0_amd64.deb'],
         File['/etc/ssl/logstash_cert.crt'],
         File['/etc/ssl/logstash_key.key'],
