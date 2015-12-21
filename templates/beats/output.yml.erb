@@ -1,6 +1,6 @@
 output:
   logstash:
-    hosts: [<%= @logstash_servers.map {|l| "\"#{l}:5875\""}.join(',') %>]
+    hosts: [<% p @logstash_servers.map {|l| "\"#{l}:5875\""}.join(',') %>]
     loadbalance: true
 
     tls:
