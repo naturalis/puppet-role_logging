@@ -6,4 +6,7 @@ filebeat:
       input_type: log
       document_type: apache
       fields:
-        type: apache
+        tags:
+          - apache
+          - test
+      fields_under_root: true
