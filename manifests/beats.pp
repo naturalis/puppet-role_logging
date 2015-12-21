@@ -5,6 +5,15 @@ class role_logging::beats(
   $install_filebeat = true,
   $install_topbeat = false,
   $filebeat_link = 'https://download.elastic.co/beats/filebeat/filebeat_1.0.0_amd64.deb',
+  $log_files_to_follow = [
+
+    {'paths' => ['/var/log/syslog.log'],
+    'fields'=> {'type' => 'syslog'}},
+
+    {'paths' => ['/var/log/cloud-init.log'],
+    'fields'=> {'type' => 'cloud-init'}}
+
+    ],
   $logstash_servers = ['piet.logstash.naturalis.nl'],
   $logstash_private_key,
   $logstash_certificate,
