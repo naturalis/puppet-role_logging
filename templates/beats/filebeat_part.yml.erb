@@ -4,6 +4,6 @@ filebeat:
       paths:
         - /var/log/*.log
       input_type: log
+      document_type: apache
       fields:
         type: apache
-        server: localhost
