@@ -4,11 +4,9 @@ require 'yaml'
 result = {'filebeat' => {'prospectors' => [] }}
 @log_files_to_follow.each do |f|
   temp = f.delete('input_type') if f.has_key?('input_type')
-  out = {'input_type' => 'log'}.merge(f)
-  result['filebeat']['prospectors'] << out
+  result['filebeat']['prospectors'] << f
 end
 %>
-
 <%=
-puts result.to_yaml
+result.to_yaml
 %>
