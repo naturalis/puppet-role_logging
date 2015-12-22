@@ -85,12 +85,12 @@ class role_logging::log_muncher(
         Class['::java'],
         File['/etc/ssl/logstash_cert.crt'],
         File['/etc/ssl/logstash_key.key']
-      ]
+      ],
       subscribe => [
         File['/etc/logstash/conf.d/input.conf'],
         File['/etc/logstash/conf.d/output.conf'],
         Vcsrepo['/etc/logstash/conf.d']
-        ]
+        ],
     }
 
 }
