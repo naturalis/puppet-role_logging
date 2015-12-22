@@ -5,12 +5,12 @@ output {
       hosts => [ <%= p @elasticsearch_adresses.map {|l| "\"#{l}:9200\""}.join(',') %> ]
       index => "logstash-parsefailure-%{+YYYY.MM.dd}"
     }
-  } else if [fields.testdate] == 'true' {
+  } else if [fields][testdate] == 'true' {
     elasticsearch {
       hosts => [ <%= p @elasticsearch_adresses.map {|l| "\"#{l}:9200\""}.join(',') %> ]
       index => "logstash-testdata-%{+YYYY.MM.dd}"
     }
-  } else if [fields.longterm] == 'true'  {
+  } else if [fields][longterm] == 'true'  {
     elasticsearch {
       hosts => [ <%= p @elasticsearch_adresses.map {|l| "\"#{l}:9200\""}.join(',') %> ]
       index => "logstash-longterm-%{+YYYY.MM.dd}"
