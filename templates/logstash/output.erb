@@ -1,3 +1,4 @@
 output {
+  if
   elasticsearch { hosts => [ <%= p @elasticsearch_adresses.map {|l| "\"#{l}:9200\""}.join(',') %> ] }
 }
