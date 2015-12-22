@@ -51,7 +51,7 @@ class role_logging::elasticsearch_node(
     cron_hour   => 1,
     cron_minute => 1,
     master_only => true,
-
+    host        => $::ipaddress,
   }
 
   curator::job { 'testdata_delete':
@@ -62,6 +62,7 @@ class role_logging::elasticsearch_node(
     cron_hour   => 1,
     cron_minute => 5,
     master_only => true,
+    host        => $::ipaddress,
   }
 
   curator::job { 'default_delete':
@@ -72,6 +73,7 @@ class role_logging::elasticsearch_node(
     cron_hour   => 1,
     cron_minute => 10,
     master_only => true,
+    host        => $::ipaddress,
   }
 
   curator::job { 'parsefailure_delete':
@@ -82,6 +84,7 @@ class role_logging::elasticsearch_node(
     cron_hour   => 1,
     cron_minute => 15,
     master_only => true,
+    host        => $::ipaddress,
   }
 
 }
