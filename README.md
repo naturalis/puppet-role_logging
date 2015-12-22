@@ -32,5 +32,17 @@ An example could be
     geoip: true
     geoip_field: source_ip
 ```
+For data that should be kept longer use
+```
+fields:
+  longterm: true
+```
+For test data
+```
+fields:
+  testdata: true
+```
+
 note: `fields.<key>` can only contain a string.
 ### log_muncher.pp configuration
+Two important variables `$elasticsearch_adresses` and `$filter_tag`
