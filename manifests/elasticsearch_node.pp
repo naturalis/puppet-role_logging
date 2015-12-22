@@ -3,12 +3,16 @@
 #
 class role_logging::elasticsearch_node(
   $nodes_ip_array = [],
+  $longterm_term = 14,
+  $testdata_term = 5,
+  $default_term = 7,
+  $parsefail_term = 2,
   ){
 
   $heapsize = ceiling($::memorysize_mb/2048)
   $minimum_master_nodes = count($nodes_ip_array)/2 + 1
 
-  notice($minimum_master_nodes)
+  package['pip'] -> class {'curaror': }
 
   class { 'elasticsearch':
     package_url   => 'https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.1.0/elasticsearch-2.1.0.deb',
@@ -31,8 +35,6 @@ class role_logging::elasticsearch_node(
     }
   }
 
-      #'ES_HEAP_SIZE' => ceiling($::memorysize_mb/2048)
-
   elasticsearch::instance { "logging-cluster-${::hostname}":
 
   }
@@ -41,21 +43,41 @@ class role_logging::elasticsearch_node(
     instances  => "logging-cluster-${::hostname}",
   }
 
-  # es_instance_conn_validator { "logging-cluster-${::hostname}" :
-  #   server =>  'localhost',
-  #   port   => '9200',
-  # }
+  curator::job { 'logterm_delete':
+    command     => 'delete',
+    prefix      => 'logstash-longterm-'
+    older_than  => $longterm_term,
+    cron_hour   => 1,
+    cron_minute => 1,
+    master_only => true,
 
+  }
 
-  # set minimum number of master nodig to (number of nodes /2  + 1)
-  # check https://www.elastic.co/guide/en/elasticsearch/guide/current/_important_configuration_changes.html#_minimum_master_nodes
-  # exec { 'set number of master nodes':
-  #   command   => '/usr/bin/curl -XPUT localhost:9200/_cluster/settings -d \'{ "persistent" : { "discovery.zen.minimum_master_nodes" : \'"$(( ($(/usr/bin/curl -s localhost:9200/_cat/nodes | grep elasticsearch | wc -l)/2) + 1))"\' } } \'',
-  #   unless    => '/usr/bin/test "$(curl -s localhost:9200/_cat/nodes | grep elasticsearch | grep \' m \' | wc -l)" -eq "$(( ($(/usr/bin/curl -s localhost:9200/_cat/nodes | grep elasticsearch | wc -l)/2) + 1))" ',
-  #   #require   => Es_instance_conn_validator["logging-cluster-${::hostname}"] ,
-  #   require   => Class['elasticsearch'],
-  #   tries     => 5,
-  #   try_sleep => 10,
-  # }
+  curator::job { 'testdata_delete':
+    command     => 'delete',
+    prefix      => 'logstash-testdata-'
+    older_than  => $testdata_term,
+    cron_hour   => 1,
+    cron_minute => 5,
+    master_only => true,
+  }
+
+  curator::job { 'default_delete':
+    command     => 'delete',
+    prefix      => 'logstash-'
+    older_than  => $default_term,
+    cron_hour   => 1,
+    cron_minute => 10,
+    master_only => true,
+  }
+
+  curator::job { 'parsefailure_delete':
+    command     => 'delete',
+    prefix      => 'logstash-parsefailure-'
+    older_than  => $parsefail_term,
+    cron_hour   => 1,
+    cron_minute => 15,
+    master_only => true,
+  }
 
 }
