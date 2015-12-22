@@ -19,7 +19,7 @@ class role_logging::beats(
   $logstash_certificate,
 ){
 
-  notify { $::test_global : }
+  notify { $::test_global[0] : }
 
   file { '/etc/ssl/logstash_key.key' :
     ensure  => present,
