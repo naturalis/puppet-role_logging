@@ -91,7 +91,7 @@ class role_logging::log_muncher(
       subscribe => [
         File['/etc/logstash/conf.d/input.conf'],
         File['/etc/logstash/conf.d/output.conf'],
-        Vcsrepo['/etc/logstash/conf.d']
+        Vcsrepo['/opt/logstash-filter/']
         ],
     }
 
