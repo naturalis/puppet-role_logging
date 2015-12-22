@@ -16,17 +16,20 @@ should be a list of dns records which are resolvable in the form of `<name>.logs
 This is a array of hashes that configures the log files to follow. And example is in `yaml`
 ```
 ---
-- paths: /var/log/syslog
+- paths:
+  - /var/log/syslog
   fields:
     type: syslog
-- paths: /var/log/apache2/*.log
+- paths:
+  - /var/log/apache2/*.log
   fields:
     type: apache
 ```
 Keys under `fields` are free to use. This can be used add metadata to the logs which Logstash or Elasticsearch can use.
 An example could be
 ```
-- paths: /var/log/apache2/*.log
+- paths:
+  - /var/log/apache2/*.log
   fields:
     type: apache
     geoip: true
