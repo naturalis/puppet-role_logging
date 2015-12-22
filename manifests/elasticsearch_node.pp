@@ -12,7 +12,7 @@ class role_logging::elasticsearch_node(
   $heapsize = ceiling($::memorysize_mb/2048)
   $minimum_master_nodes = count($nodes_ip_array)/2 + 1
 
-  package['pip'] -> class {'curator': }
+  package['python-pip'] -> class {'curator': }
 
   class { 'elasticsearch':
     package_url   => 'https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.1.0/elasticsearch-2.1.0.deb',
