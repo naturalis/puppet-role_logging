@@ -3,12 +3,12 @@ output {
   if "_grokparsefailure" in [tags] {
     elasticsearch {
       hosts => [ <%= p @elasticsearch_adresses.map {|l| "\"#{l}:9200\""}.join(',') %> ]
-      index => "logstash-parsefailure-%{+YYYY.MM.dd}"
+      index => "parsefailure-%{+YYYY.MM.dd}"
     }
   } else if [fields][testdata] {
     elasticsearch {
       hosts => [ <%= p @elasticsearch_adresses.map {|l| "\"#{l}:9200\""}.join(',') %> ]
-      index => "logstash-testdata-%{+YYYY.MM.dd}"
+      index => "testdata-%{+YYYY.MM.dd}"
     }
   } else if [fields][longterm]  {
     elasticsearch {
@@ -18,6 +18,7 @@ output {
   } else {
     elasticsearch {
       hosts => [ <%= p @elasticsearch_adresses.map {|l| "\"#{l}:9200\""}.join(',') %> ]
+      index => "logstash-default-%{+YYYY.MM.dd}"
     }
   }
 

@@ -48,4 +48,10 @@ fields:
 
 note: `fields.<key>` can only contain a string.
 ### log_muncher.pp configuration
-Two important variables `$elasticsearch_adresses` and `$filter_tag`
+Two important variables `$elasticsearch_adresses` and `$filter_tag`.
+
+`$elasticsearch_adresses`  
+An array of ip adrresses of Elasticsearch nodes.
+
+`$filter_tag`  
+Git tag of repository where the Logstash `filter {}` part is hosted. 
