@@ -4,7 +4,8 @@
 class role_logging::log_muncher(
     $elasticsearch_adresses = [],
     $logstash_link = 'https://download.elastic.co/logstash/logstash/packages/debian/logstash_2.1.1-1_all.deb',
-    $filter = 'filter {}',
+    $filter_repo = 'https://github.com/naturalis/logstash_filter',
+    $filter_tag = 'master',
     $logstash_private_key,
     $logstash_certificate,
 ){
@@ -14,9 +15,10 @@ class role_logging::log_muncher(
     $input = template('role_logging/logstash/input.erb')
     $output = template('role_logging/logstash/output.erb')
 
-    $logstash_filter = "### MANAGED BY PUPPET ###\n${input}\n${filter}\n${output}"
+    #$logstash_filter = "### MANAGED BY PUPPET ###\n${input}\n${filter}\n${output}"
 
 
+    package {'git': }
 
     class { '::java':
       distribution => 'jre',
@@ -33,38 +35,61 @@ class role_logging::log_muncher(
       refreshonly => true,
     }
 
-    service { 'logstash':
-      ensure    => running,
-      require   => [
-        Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
-        Class['::java']],
-      subscribe => File['/etc/logstash/conf.d/logstash.conf']
-    }
-
-
-    file { '/etc/ssl/logstash_key.key' :
+    file { '/etc/ssl/logstash_key.key':
       ensure  => present,
       content => $logstash_private_key,
       mode    => '0644',
     }
 
-    file { '/etc/ssl/logstash_cert.crt' :
+    file { '/etc/ssl/logstash_cert.crt':
       ensure  => present,
       content => $logstash_certificate,
       mode    => '0644',
     }
 
-    file {'/etc/logstash/conf.d/logstash.conf':
-      content => $logstash_filter,
+    file {'/etc/logstash/conf.d/input.conf':
+      content => "### MANAGED BY PUPPET ###\n${input}",
       mode    => '0660',
       owner   => 'logstash',
       group   => 'wheel',
       require => [
         Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
-        File['/etc/ssl/logstash_cert.crt'],
-        File['/etc/ssl/logstash_key.key']
         ],
     }
 
+    file {'/etc/logstash/conf.d/output.conf':
+      content => $output,
+      mode    => '0660',
+      owner   => 'logstash',
+      group   => 'wheel',
+      require => [
+        Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
+        ],
+    }
+
+    vcsrepo {'/etc/logstash/conf.d':
+      ensure   => latest,
+      provider => git,
+      source   => 'https://github.com/naturalis/logstash_filter',
+      revision => $filter_tag,
+      require  => [
+        Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
+        Package['git'],
+      ]
+    }
+
+    service { 'logstash':
+      ensure    => running,
+      require   => [
+        Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
+        Class['::java'],
+        File['/etc/ssl/logstash_cert.crt'],
+        File['/etc/ssl/logstash_key.key']
+      ]
+      subscribe => [
+        File['/etc/logstash/conf.d/input.conf'],
+        File['/etc/logstash/conf.d/output.conf'],
+        ]
+    }
 
 }
