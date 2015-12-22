@@ -45,7 +45,7 @@ class role_logging::elasticsearch_node(
 
   curator::job { 'logterm_delete':
     command     => 'delete',
-    prefix      => 'logstash-longterm-'
+    prefix      => 'logstash-longterm-',
     older_than  => $longterm_term,
     cron_hour   => 1,
     cron_minute => 1,
@@ -55,7 +55,7 @@ class role_logging::elasticsearch_node(
 
   curator::job { 'testdata_delete':
     command     => 'delete',
-    prefix      => 'logstash-testdata-'
+    prefix      => 'logstash-testdata-',
     older_than  => $testdata_term,
     cron_hour   => 1,
     cron_minute => 5,
@@ -64,7 +64,7 @@ class role_logging::elasticsearch_node(
 
   curator::job { 'default_delete':
     command     => 'delete',
-    prefix      => 'logstash-'
+    prefix      => 'logstash-',
     older_than  => $default_term,
     cron_hour   => 1,
     cron_minute => 10,
@@ -73,7 +73,7 @@ class role_logging::elasticsearch_node(
 
   curator::job { 'parsefailure_delete':
     command     => 'delete',
-    prefix      => 'logstash-parsefailure-'
+    prefix      => 'logstash-parsefailure-',
     older_than  => $parsefail_term,
     cron_hour   => 1,
     cron_minute => 15,
