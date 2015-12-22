@@ -52,9 +52,7 @@ class role_logging::log_muncher(
       mode    => '0660',
       owner   => 'logstash',
       group   => 'wheel',
-      require => [
-        Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
-        ],
+      require => Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb']
     }
 
     file {'/etc/logstash/conf.d/output.conf':
@@ -62,12 +60,16 @@ class role_logging::log_muncher(
       mode    => '0660',
       owner   => 'logstash',
       group   => 'wheel',
-      require => [
-        Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
-        ],
+      require => Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb']
     }
 
-    vcsrepo {'/etc/logstash/conf.d':
+    file {'/etc/logstash/conf.d/filter.conf':
+      ensure  => 'link',
+      target  => '/opt/logstash-filter/filter.conf',
+      require => Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb']
+    }
+
+    vcsrepo {'/opt/logstash-filter/':
       ensure   => latest,
       provider => git,
       source   => 'https://github.com/naturalis/logstash_filter',
