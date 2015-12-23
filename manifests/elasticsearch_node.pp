@@ -3,7 +3,7 @@
 #
 class role_logging::elasticsearch_node(
   $nodes_ip_array = [],
-  $longterm_term = 14,
+  $longterm_term = 365,
   $testdata_term = 5,
   $default_term = 7,
   $parsefail_term = 2,
