@@ -9,8 +9,8 @@ This puppet role module configures a cluster for storing and analyzing logs. It 
 ### beats.pp configuration
 Two important variables. `$logstash_servers` and `$log_files_to_follow`
 
-`$logash_servers`  
-should be a list of dns records which are resolvable in the form of `<name>.logstash.naturalis.nl`
+`$logstash_servers`  
+Should be a list of DNS records which are resolvable in the form of `<name>.logstash.naturalis.nl`
 
 `$log_files_to_follow`  
 This is a array of hashes that configures the log files to follow. And example is in `yaml`
@@ -46,7 +46,7 @@ fields:
   testdata: true
 ```
 
-note: `fields.<key>` can only contain a string.
+Note: `fields.<key>` can only contain a string.
 ### log_muncher.pp configuration
 Two important variables `$elasticsearch_adresses` and `$filter_tag`.
 
