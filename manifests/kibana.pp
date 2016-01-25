@@ -17,15 +17,17 @@ class role_logging::kibana(
   }
 
   file_line {'kibana_es_host_config':
-    path  => "/opt/kibana-${kibana_version}-linux-x64/config/kibana.yml",
-    line  => "elasticsearch.url: http://${elasticsearch_host}:9200",
-    match => '^elasticsearch.url'
+    path    => "/opt/kibana-${kibana_version}-linux-x64/config/kibana.yml",
+    line    => "elasticsearch.url: http://${elasticsearch_host}:9200",
+    match   => '^elasticsearch.url',
+    require => Staging::Deploy["kibana-${kibana_version}-linux-x64.tar.gz"],
   }
 
   file_line {'server_host_config':
-    path  => "/opt/kibana-${kibana_version}-linux-x64/config/kibana.yml",
-    line  => 'server.host: 127.0.0.1',
-    match => '^server.host'
+    path    => "/opt/kibana-${kibana_version}-linux-x64/config/kibana.yml",
+    line    => 'server.host: 127.0.0.1',
+    match   => '^server.host',
+    require => Staging::Deploy["kibana-${kibana_version}-linux-x64.tar.gz"],
   }
 
   file { 'kibana service init':
@@ -76,6 +78,7 @@ class role_logging::kibana(
     password  => $kibana_password,
     mechanism => basic,
     notify    => Service['nginx'],
+    require   => Class['nginx'],
   }
   # Set correct permissions on password file
   file { '/etc/nginx/.htpasswd':

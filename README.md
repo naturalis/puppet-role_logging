@@ -26,15 +26,24 @@ This is a array of hashes that configures the log files to follow. And example i
     type: apache
 ```
 Keys under `fields` are free to use. This can be used add metadata to the logs which Logstash or Elasticsearch can use.
-An example could be
+For geoip you can use the following configurations. For source ip:
 ```
 - paths:
   - /var/log/apache2/*.log
   fields:
     type: apache
-    geoip: true
-    geoip_field: source_ip
+    geoip_src_field: source_ip_field
 ```
+For destination ip you can use:
+```
+- paths:
+  - /var/log/apache2/*.log
+  fields:
+    type: apache
+    geoip_dest_field: destination_ip_field
+```
+This will add geo ip information in the fields `geoip_src / geoip_dest`   
+
 For data that should be kept longer use
 ```
 fields:
@@ -54,4 +63,4 @@ Two important variables `$elasticsearch_adresses` and `$filter_tag`.
 An array of ip adrresses of Elasticsearch nodes.
 
 `$filter_tag`  
-Git tag of repository where the Logstash `filter {}` part is hosted. 
+Git tag of repository where the Logstash `filter {}` part is hosted.
