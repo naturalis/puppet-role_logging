@@ -78,7 +78,7 @@ class role_logging::kibana(
     password  => $kibana_password,
     mechanism => basic,
     notify    => Service['nginx'],
-    require   => Class['nginx'],
+    require   => File['/etc/nginx'],
   }
   # Set correct permissions on password file
   file { '/etc/nginx/.htpasswd':
