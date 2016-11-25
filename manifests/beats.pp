@@ -4,7 +4,7 @@
 class role_logging::beats(
   $install_filebeat = true,
   $install_topbeat = false,
-  $filebeat_link = 'https://download.elastic.co/beats/filebeat/filebeat_1.0.0_amd64.deb',
+  $filebeat_version = '1.3.1',
   $log_files_to_follow = [
 
     {'paths' => ['/var/log/syslog'],
@@ -19,6 +19,7 @@ class role_logging::beats(
   $logstash_certificate,
 ){
 
+  $filebeat_link = "https://download.elastic.co/beats/filebeat/filebeat_${filebeat_version}_amd64.deb"
 
   file { '/etc/ssl/logstash_key.key' :
     ensure  => present,
@@ -35,26 +36,26 @@ class role_logging::beats(
 
   if ($install_filebeat) {
     wget::fetch { $filebeat_link :
-      destination => '/opt/filebeat_1.0.0_amd64.deb',
+      destination => "/opt/filebeat_${filebeat_version}_amd64.deb",
       timeout     => 0,
       verbose     => false,
     }
 
-    exec { '/usr/bin/dpkg -i /opt/filebeat_1.0.0_amd64.deb':
+    exec { "/usr/bin/dpkg -i /opt/filebeat_${filebeat_version}_amd64.deb" :
       subscribe   => Wget::Fetch[$filebeat_link],
       refreshonly => true,
     }
 
     file {'/etc/filebeat/filebeat.yml':
       content => template('role_logging/beats/filebeat_part.yml.erb','role_logging/beats/output.yml.erb'),
-      require => Exec['/usr/bin/dpkg -i /opt/filebeat_1.0.0_amd64.deb'],
+      require => Exec["/usr/bin/dpkg -i /opt/filebeat_${filebeat_version}_amd64.deb"],
     }
 
     service { 'filebeat':
       ensure    => running,
       subscribe => File['/etc/filebeat/filebeat.yml'],
       require   => [
-        Exec['/usr/bin/dpkg -i /opt/filebeat_1.0.0_amd64.deb'],
+        Exec["/usr/bin/dpkg -i /opt/filebeat_${filebeat_version}_amd64.deb"],
         File['/etc/ssl/logstash_cert.crt'],
         File['/etc/ssl/logstash_key.key'],
         File['/etc/filebeat/filebeat.yml']
