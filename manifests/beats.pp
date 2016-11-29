@@ -41,21 +41,21 @@ class role_logging::beats(
       verbose     => false,
     }
 
-    exec { "/usr/bin/dpkg -i /opt/filebeat_${filebeat_version}_amd64.deb" :
+    exec { "/usr/bin/dpkg --force-all -i /opt/filebeat_${filebeat_version}_amd64.deb" :
       subscribe   => Wget::Fetch[$filebeat_link],
       refreshonly => true,
     }
 
     file {'/etc/filebeat/filebeat.yml':
       content => template('role_logging/beats/filebeat_part.yml.erb','role_logging/beats/output.yml.erb'),
-      require => Exec["/usr/bin/dpkg -i /opt/filebeat_${filebeat_version}_amd64.deb"],
+      require => Exec["/usr/bin/dpkg --force-all -i /opt/filebeat_${filebeat_version}_amd64.deb"],
     }
 
     service { 'filebeat':
       ensure    => running,
       subscribe => File['/etc/filebeat/filebeat.yml'],
       require   => [
-        Exec["/usr/bin/dpkg -i /opt/filebeat_${filebeat_version}_amd64.deb"],
+        Exec["/usr/bin/dpkg --force-all -i /opt/filebeat_${filebeat_version}_amd64.deb"],
         File['/etc/ssl/logstash_cert.crt'],
         File['/etc/ssl/logstash_key.key'],
         File['/etc/filebeat/filebeat.yml']
