@@ -1,0 +1,3 @@
+---
+array:
+  analytics_logs: /var/log/storage-analytics.json

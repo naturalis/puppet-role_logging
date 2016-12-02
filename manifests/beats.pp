@@ -33,6 +33,29 @@ class role_logging::beats(
     mode    => '0644',
   }
 
+  file {['/etc/facter','/etc/facter/facts.d/']:
+    ensure => directory,
+  } ->
+
+  file {'/etc/facter/facts.d/analytics_logs.yaml':
+    ensure  => present,
+    content => template('role_logging/facts/analytics_logs.yaml'),
+    mode    => '0775',
+  }
+  
+  if ($::analytics_logs) {
+    if ($::analytics_logs == '') {
+      notify {'No analytics logging':}
+      $all_log_files_to_follow = $log_files_to_follow 
+    } 
+      else {
+        $all_log_files_to_follow = concat($::analytics_logs, $log_files_to_follow)
+      }
+  } 
+    else {
+      $all_log_files_to_follow = $log_files_to_follow
+    }
+
 
   if ($install_filebeat) {
     wget::fetch { $filebeat_link :
