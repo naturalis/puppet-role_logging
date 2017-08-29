@@ -2,22 +2,22 @@ output {
 
   if "_grokparsefailure" in [tags] {
     elasticsearch {
-      hosts => [ <%= p @elasticsearch_adresses.map {|l| "\"#{l}:9200\""}.join(',') %> ]
+      hosts => [ <%= p scope['::role_logging::logstash::elasticsearch_adresses'].map {|l| "\"#{l}:9200\""}.join(',') %> ]
       index => "parsefailure-%{+YYYY.MM.dd}"
     }
   } else if [fields][testdata] {
     elasticsearch {
-      hosts => [ <%= p @elasticsearch_adresses.map {|l| "\"#{l}:9200\""}.join(',') %> ]
+      hosts => [ <%= p scope['::role_logging::logstash::elasticsearch_adresses'].map {|l| "\"#{l}:9200\""}.join(',') %> ]
       index => "testdata-%{+YYYY.MM.dd}"
     }
   } else if [fields][longterm]  {
     elasticsearch {
-      hosts => [ <%= p @elasticsearch_adresses.map {|l| "\"#{l}:9200\""}.join(',') %> ]
+      hosts => [ <%= p scope['::role_logging::logstash::elasticsearch_adresses'].map {|l| "\"#{l}:9200\""}.join(',') %> ]
       index => "logstash-longterm-%{+YYYY.MM.dd}"
     }
   } else {
     elasticsearch {
-      hosts => [ <%= p @elasticsearch_adresses.map {|l| "\"#{l}:9200\""}.join(',') %> ]
+      hosts => [ <%= p scope['::role_logging::logstash::elasticsearch_adresses'].map {|l| "\"#{l}:9200\""}.join(',') %> ]
       index => "logstash-default-%{+YYYY.MM.dd}"
     }
   }

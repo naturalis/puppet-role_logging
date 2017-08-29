@@ -9,32 +9,32 @@ class role_logging::kibana(
   $private_key,
 ){
 
-  $kibana_link = "https://download.elastic.co/kibana/kibana/kibana-${kibana_version}-linux-x64.tar.gz"
+  $kibana_link = "https://download.elastic.co/kibana/kibana/kibana-${role_logging::kibana::kibana_version}-linux-x64.tar.gz"
 
-  staging::deploy { "kibana-${kibana_version}-linux-x64.tar.gz":
+  staging::deploy { "kibana-${role_logging::kibana::kibana_version}-linux-x64.tar.gz":
     source => $kibana_link,
     target => '/opt/'
   }
 
   file_line {'kibana_es_host_config':
-    path    => "/opt/kibana-${kibana_version}-linux-x64/config/kibana.yml",
-    line    => "elasticsearch.url: http://${elasticsearch_host}:9200",
+    path    => "/opt/kibana-${role_logging::kibana::kibana_version}-linux-x64/config/kibana.yml",
+    line    => "elasticsearch.url: http://${role_logging::kibana::elasticsearch_host}:9200",
     match   => '^elasticsearch.url',
-    require => Staging::Deploy["kibana-${kibana_version}-linux-x64.tar.gz"],
+    require => Staging::Deploy["kibana-${role_logging::kibana::kibana_version}-linux-x64.tar.gz"],
   }
 
   file_line {'server_host_config':
-    path    => "/opt/kibana-${kibana_version}-linux-x64/config/kibana.yml",
+    path    => "/opt/kibana-${role_logging::kibana::kibana_version}-linux-x64/config/kibana.yml",
     line    => 'server.host: 127.0.0.1',
     match   => '^server.host',
-    require => Staging::Deploy["kibana-${kibana_version}-linux-x64.tar.gz"],
+    require => Staging::Deploy["kibana-${role_logging::kibana::kibana_version}-linux-x64.tar.gz"],
   }
 
   file { 'kibana service init':
     content => template('role_logging/kibana/init.erb'),
     path    => '/etc/init.d/kibana',
     mode    => '0775',
-    require => Staging::Deploy["kibana-${kibana_version}-linux-x64.tar.gz"],
+    require => Staging::Deploy["kibana-${role_logging::kibana::kibana_version}-linux-x64.tar.gz"],
   }
 
   file {'kibana log directory':
@@ -50,13 +50,13 @@ class role_logging::kibana(
 
   file { '/etc/ssl/web_client_key.pem' :
     ensure  => present,
-    content => $private_key,
+    content => $role_logging::kibana::private_key,
     mode    => '0644',
   }
 
   file { '/etc/ssl/web_client_cert.pem' :
     ensure  => present,
-    content => $certificate,
+    content => $role_logging::kibana::certificate,
     mode    => '0644',
   }
 
@@ -75,7 +75,7 @@ class role_logging::kibana(
   httpauth { 'kibana':
     ensure    => present,
     file      => '/etc/nginx/.htpasswd',
-    password  => $kibana_password,
+    password  => $role_logging::kibana::kibana_password,
     mechanism => basic,
     notify    => Service['nginx'],
     require   => File['/etc/nginx'],

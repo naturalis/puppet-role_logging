@@ -24,26 +24,26 @@ class role_logging::log_muncher(
       distribution => 'jre',
     }
 
-    wget::fetch { $logstash_link :
+    wget::fetch { $role_logging::log_muncher::logstash_link :
       destination => '/opt/logstash_2.1.1-1_all.deb',
       timeout     => 0,
       verbose     => false,
     }
 
     exec { '/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb':
-      subscribe   => Wget::Fetch[$logstash_link],
+      subscribe   => Wget::Fetch[$role_logging::log_muncher::logstash_link],
       refreshonly => true,
     }
 
     file { '/etc/ssl/logstash_key.key':
       ensure  => present,
-      content => $logstash_private_key,
+      content => $role_logging::log_muncher::logstash_private_key,
       mode    => '0644',
     }
 
     file { '/etc/ssl/logstash_cert.crt':
       ensure  => present,
-      content => $logstash_certificate,
+      content => $role_logging::log_muncher::logstash_certificate,
       mode    => '0644',
     }
 
@@ -73,7 +73,7 @@ class role_logging::log_muncher(
       ensure   => latest,
       provider => git,
       source   => 'https://github.com/naturalis/logstash_filter',
-      revision => $filter_tag,
+      revision => $role_logging::log_muncher::filter_tag,
       require  => [
         Exec['/usr/bin/dpkg -i /opt/logstash_2.1.1-1_all.deb'],
         Package['git'],

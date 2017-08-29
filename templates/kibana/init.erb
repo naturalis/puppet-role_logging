@@ -19,7 +19,7 @@ DESC="Kibana 4"
 NAME=kibana
 
 if [ "x$KIBANA_HOME" = "x" ]; then
-    KIBANA_HOME="/opt/kibana-<%= @kibana_version %>-linux-x64"
+    KIBANA_HOME="/opt/kibana-<%= scope['::role_logging::kibana::kibana_version'] %>-linux-x64"
 fi
 
 DAEMON=$KIBANA_HOME/bin/$NAME

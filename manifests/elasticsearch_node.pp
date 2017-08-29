@@ -10,7 +10,7 @@ class role_logging::elasticsearch_node(
   ){
 
   $heapsize = ceiling($::memorysize_mb/2048)
-  $minimum_master_nodes = count($nodes_ip_array)/2 + 1
+  $minimum_master_nodes = count($role_logging::elasticseach_node::nodes_ip_array)/2 + 1
 
   package {'python-pip': }
 
@@ -32,7 +32,7 @@ class role_logging::elasticsearch_node(
       'network.host'                         => $::ipaddress,
       'discovery.zen.minimum_master_nodes'   => 1,
       'discovery.zen.ping.multicast.enabled' => false,
-      'discovery.zen.ping.unicast.hosts'     => $nodes_ip_array,
+      'discovery.zen.ping.unicast.hosts'     => $role_logging::elasticsearch_node::nodes_ip_array,
       'discovery.zen.ping_timeout'           => '30s',
     },
     init_defaults => {
@@ -52,7 +52,7 @@ class role_logging::elasticsearch_node(
     bin_file    => '/usr/local/bin/curator',
     command     => 'delete',
     prefix      => 'logstash-longterm-',
-    older_than  => $longterm_term,
+    older_than  => $role_logging::elasticsearch_node::longterm_term,
     cron_hour   => 1,
     cron_minute => 1,
     master_only => true,
@@ -63,7 +63,7 @@ class role_logging::elasticsearch_node(
     bin_file    => '/usr/local/bin/curator',
     command     => 'delete',
     prefix      => 'testdata-',
-    older_than  => $testdata_term,
+    older_than  => $role_logging::elasticsearch_node::testdata_term,
     cron_hour   => 1,
     cron_minute => 5,
     master_only => true,
@@ -74,7 +74,7 @@ class role_logging::elasticsearch_node(
     bin_file    => '/usr/local/bin/curator',
     command     => 'delete',
     prefix      => 'logstash-default-',
-    older_than  => $default_term,
+    older_than  => $role_logging::elasticsearch_node::default_term,
     cron_hour   => 1,
     cron_minute => 10,
     master_only => true,
@@ -85,7 +85,7 @@ class role_logging::elasticsearch_node(
     bin_file    => '/usr/local/bin/curator',
     command     => 'delete',
     prefix      => 'parsefailure-',
-    older_than  => $parsefail_term,
+    older_than  => $role_logging::elasticsearch_node::parsefail_term,
     cron_hour   => 1,
     cron_minute => 15,
     master_only => true,
