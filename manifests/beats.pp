@@ -33,6 +33,24 @@ class role_logging::beats(
     mode    => '0644',
   }
 
+#  file {['/etc/facter','/etc/facter/facts.d/']:
+#    ensure => directory,
+#  } ->
+
+#  file {'/etc/facter/facts.d/analytics_logs.yaml':
+#    ensure  => present,
+#    content => template('role_logging/facts/analytics_logs.yaml'),
+#    mode    => '0775',
+#  }
+#  if ($::analytics_logs) {
+#    if ($::analytics_logs == '') {
+#      notify {'No analytics logging':}
+      $all_log_files_to_follow = $log_files_to_follow 
+#    } 
+#      else {
+#        $all_log_files_to_follow = concat($log_files_to_follow,$a)
+#      }
+#    }
 
   if ($install_filebeat) {
     wget::fetch { $filebeat_link :
@@ -41,21 +59,21 @@ class role_logging::beats(
       verbose     => false,
     }
 
-    exec { "/usr/bin/dpkg -i /opt/filebeat_${filebeat_version}_amd64.deb" :
+    exec { "/usr/bin/dpkg --force-all -i /opt/filebeat_${filebeat_version}_amd64.deb" :
       subscribe   => Wget::Fetch[$filebeat_link],
       refreshonly => true,
     }
 
     file {'/etc/filebeat/filebeat.yml':
       content => template('role_logging/beats/filebeat_part.yml.erb','role_logging/beats/output.yml.erb'),
-      require => Exec["/usr/bin/dpkg -i /opt/filebeat_${filebeat_version}_amd64.deb"],
+      require => Exec["/usr/bin/dpkg --force-all -i /opt/filebeat_${filebeat_version}_amd64.deb"],
     }
 
     service { 'filebeat':
       ensure    => running,
       subscribe => File['/etc/filebeat/filebeat.yml'],
       require   => [
-        Exec["/usr/bin/dpkg -i /opt/filebeat_${filebeat_version}_amd64.deb"],
+        Exec["/usr/bin/dpkg --force-all -i /opt/filebeat_${filebeat_version}_amd64.deb"],
         File['/etc/ssl/logstash_cert.crt'],
         File['/etc/ssl/logstash_key.key'],
         File['/etc/filebeat/filebeat.yml']
