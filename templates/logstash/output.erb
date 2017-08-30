@@ -10,6 +10,11 @@ output {
       hosts => [ <%= p scope['::role_logging::logstash::elasticsearch_adresses'].map {|l| "\"#{l}:9200\""}.join(',') %> ]
       index => "testdata-%{+YYYY.MM.dd}"
     }
+  } else if [fields][infra-analytics]  {
+    elasticsearch {
+      hosts => [ <%= p scope['::role_logging::logstash::elasticsearch_adresses'].map {|l| "\"#{l}:9200\""}.join(',') %> ]
+      index => "infra-analytics-%{+YYYY.MM.dd}"
+    }
   } else if [fields][longterm]  {
     elasticsearch {
       hosts => [ <%= p scope['::role_logging::logstash::elasticsearch_adresses'].map {|l| "\"#{l}:9200\""}.join(',') %> ]
