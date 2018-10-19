@@ -5,8 +5,8 @@ class role_logging::kibana(
   $kibana_version = '4.3.1',
   $elasticsearch_host = '127.0.0.1',
   $kibana_password,
-  $certificate,
-  $private_key,
+  $certificate = '/etc/letsencrypt/live/domain/fullchain.pem',
+  $private_key = '/etc/letsencrypt/live/domain/privkey.pem',
 ){
 
   $kibana_link = "https://download.elastic.co/kibana/kibana/kibana-${kibana_version}-linux-x64.tar.gz"
@@ -48,17 +48,17 @@ class role_logging::kibana(
     path    => '/etc/logrotate.d/kibana',
   }
 
-  file { '/etc/ssl/web_client_key.pem' :
-    ensure  => present,
-    content => $private_key,
-    mode    => '0644',
-  }
+#  file { '/etc/ssl/web_client_key.pem' :
+#    ensure  => present,
+#    content => $private_key,
+#    mode    => '0644',
+#  }
 
-  file { '/etc/ssl/web_client_cert.pem' :
-    ensure  => present,
-    content => $certificate,
-    mode    => '0644',
-  }
+#  file { '/etc/ssl/web_client_cert.pem' :
+#    ensure  => present,
+#    content => $certificate,
+#    mode    => '0644',
+#  }
 
   service {'kibana':
     ensure    => running,
@@ -91,13 +91,11 @@ class role_logging::kibana(
     proxy                => 'http://kibana_naturalis_nl',
     ssl                  => true,
     listen_port          => 443,
-    ssl_cert             => '/etc/ssl/web_client_cert.pem',
-    ssl_key              => '/etc/ssl/web_client_key.pem',
+    ssl_cert             => $certificate,
+    ssl_key              => $private_key,
     auth_basic           => 'Restricted Content',
     auth_basic_user_file => '/etc/nginx/.htpasswd',
     require              => [
-      File['/etc/ssl/web_client_key.pem'],
-      File['/etc/ssl/web_client_cert.pem'],
       Httpauth['kibana']],
   }
 
